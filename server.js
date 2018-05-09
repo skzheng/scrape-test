@@ -3,11 +3,22 @@ const bodyParser = require('body-parser')
 const path = require('path');
 const app = express();
 
-// app.use(express.static(path.join(__dirname, 'build')));
-// app.use('/', express.static(`${__dirname}/public`));
+const scrapeIt = require("scrape-it");
+
 app.use('/', express.static(path.join(__dirname, '/build')));
+
 app.get('/ping', function (req, res) {
  return res.send('pong');
+});
+
+app.get('/scraper', function(req,res){ 
+  console.log(req.query);
+  scrapeIt(req.query.url, {
+    data: req.query.selectors
+  }).then(({ data, response }) => {
+      console.log(`Status Code: ${response.statusCode}`)
+      res.send(data)
+  })
 });
 
 app.get('/', function (req, res) {
